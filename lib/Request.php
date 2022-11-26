@@ -9,6 +9,7 @@ abstract class Request
 {
     private static $validOutputFormats = array("json", "xml");
     private static $requestAcceptType = "";
+    private static $requestAcceptEncoding = "";
 
     /**
      * Sends GET request and returns output in specified format.
@@ -52,6 +53,11 @@ abstract class Request
             "Accept: ".$accept,
             "Authorization: Bearer ".$token
         );
+
+        /// enable GZIP compression for post MLSGRID Api
+        if(self::$requestAcceptEncoding) {
+            $headers[] = "Accept-Encoding:".self::$requestAcceptEncoding;
+        }
 
         // Send request
         $response = $curl->request("get", $url, $headers, null, false);
@@ -112,6 +118,11 @@ abstract class Request
             "Accept: ".$accept,
             "Authorization: Bearer ".$token
         );
+
+        /// enable GZIP compression for post MLSGRID Api
+        if(self::$requestAcceptEncoding) {
+            $headers[] = "Accept-Encoding:".self::$requestAcceptEncoding;
+        }
 
         // Send request
         $response = $curl->request("post", $url, $headers, $params, false);
@@ -192,6 +203,16 @@ abstract class Request
             self::$requestAcceptType = $type;
         }
     }
+
+	/**
+     * Sets accep encoding
+     *
+     * @param string
+     */
+    public static function setAcceptEncoding($encoding = "") {
+        self::$requestAcceptEncoding = $encoding;
+     }
+
 
     /**
      * Formats request parameters to compatible string
