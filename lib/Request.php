@@ -7,7 +7,7 @@ use RESO\Util;
 
 abstract class Request
 {
-    private static $validOutputFormats = array("json", "xml");
+    private static $validOutputFormats = array("json");
     private static $requestAcceptType = "";
     private static $requestAcceptEncoding = "";
 
@@ -21,7 +21,7 @@ abstract class Request
      *
      * @return mixed API Request response in requested data format.
      */
-    public static function request($request, $output_format = "xml", $decode_json = false)
+    public static function request($request, $output_format = "json", $decode_json = true)
     {
         \RESO\RESO::logMessage("Sending request '".$request."' to RESO API.");
 
@@ -34,6 +34,7 @@ abstract class Request
         }
 
         $curl = new \RESO\HttpClient\CurlClient();
+        
 
         // Parse and validate request parameters
         $request = self::formatRequestParameters($request);
@@ -56,7 +57,7 @@ abstract class Request
 
         /// enable GZIP compression for post MLSGRID Api
         if(self::$requestAcceptEncoding) {
-            $headers[] = "Accept-Encoding:".self::$requestAcceptEncoding;
+            $curl->setEncoding(self::$requestAcceptEncoding);
         }
 
         // Send request
@@ -121,7 +122,7 @@ abstract class Request
 
         /// enable GZIP compression for post MLSGRID Api
         if(self::$requestAcceptEncoding) {
-            $headers[] = "Accept-Encoding:".self::$requestAcceptEncoding;
+            $curl->setEncoding(self::$requestAcceptEncoding);
         }
 
         // Send request
