@@ -1,5 +1,5 @@
 {
-  "name": "resophp/reso",
+  "name": "reso/reso-php",
   "description": "RESO PHP SDK / Library",
   "keywords": [
     "reso",
@@ -26,6 +26,6 @@
     "phpunit/phpunit": "5.0.*"
   },
   "autoload": {
-    "psr-4": { "RESO\\" : "reso/lib/" }
+    "classmap": ["reso/reso-php/lib/"]
   }
 }
