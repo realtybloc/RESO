@@ -20,6 +20,7 @@ class CurlClient implements ClientInterface
     const SDK_VERSION = '1.0.0';
     private $timeout = self::DEFAULT_TIMEOUT;
     private $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT;
+    private $encoding = '';
 
     public static function instance()
     {
@@ -111,6 +112,11 @@ class CurlClient implements ClientInterface
         return $this->connectTimeout;
     }
 
+    public function setEncoding($encoding)
+    {
+        $this->$encoding = $encoding;
+    }
+
     public function request($method, $absUrl, $headers, $params, $hasFile)
     {
         if($headers == null || !is_array($headers)) {
@@ -173,6 +179,8 @@ class CurlClient implements ClientInterface
         $opts[CURLOPT_CONNECTTIMEOUT] = $this->connectTimeout;
         $opts[CURLOPT_TIMEOUT] = $this->timeout;
         $opts[CURLOPT_HEADERFUNCTION] = $headerCallback;
+        $opts[CURLOPT_ENCODING] = $this->encoding;
+
         if($headers) {
             $opts[CURLOPT_HTTPHEADER] = $headers;
         }

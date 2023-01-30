@@ -7,8 +7,9 @@ use RESO\Util;
 
 abstract class Request
 {
-    private static $validOutputFormats = array("json", "xml");
+    private static $validOutputFormats = array("json");
     private static $requestAcceptType = "";
+    private static $requestAcceptEncoding = "";
 
     /**
      * Sends GET request and returns output in specified format.
@@ -20,7 +21,7 @@ abstract class Request
      *
      * @return mixed API Request response in requested data format.
      */
-    public static function request($request, $output_format = "xml", $decode_json = false)
+    public static function request($request, $output_format = "json", $decode_json = true)
     {
         \RESO\RESO::logMessage("Sending request '".$request."' to RESO API.");
 
@@ -33,6 +34,7 @@ abstract class Request
         }
 
         $curl = new \RESO\HttpClient\CurlClient();
+        
 
         // Parse and validate request parameters
         $request = self::formatRequestParameters($request);
@@ -52,6 +54,11 @@ abstract class Request
             "Accept: ".$accept,
             "Authorization: Bearer ".$token
         );
+
+        /// enable GZIP compression for post MLSGRID Api
+        if(self::$requestAcceptEncoding) {
+            $curl->setEncoding(self::$requestAcceptEncoding);
+        }
 
         // Send request
         $response = $curl->request("get", $url, $headers, null, false);
@@ -112,6 +119,11 @@ abstract class Request
             "Accept: ".$accept,
             "Authorization: Bearer ".$token
         );
+
+        /// enable GZIP compression for post MLSGRID Api
+        if(self::$requestAcceptEncoding) {
+            $curl->setEncoding(self::$requestAcceptEncoding);
+        }
 
         // Send request
         $response = $curl->request("post", $url, $headers, $params, false);
@@ -192,6 +204,16 @@ abstract class Request
             self::$requestAcceptType = $type;
         }
     }
+
+	/**
+     * Sets accep encoding
+     *
+     * @param string
+     */
+    public static function setAcceptEncoding($encoding = "") {
+        self::$requestAcceptEncoding = $encoding;
+     }
+
 
     /**
      * Formats request parameters to compatible string
